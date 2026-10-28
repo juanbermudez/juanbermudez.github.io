@@ -11,6 +11,5 @@ Experiments, learnings, field notes, and implementation writeups.
 
 ## Writing
 
-- [Don't Let the Agent Grade Its Own Homework](https://juanbermudez.github.io/notes/dont-let-the-agent-grade-its-own-homework): A system that improves itself while also judging itself does not get better. It gets better at approving of itself. The version I trust starts with an independent outcome check and an information barrier.
 - [Tiny Lessons](https://juanbermudez.github.io/notes/tiny-lessons): Hardcoding knowledge gets smoked by machine learning every time, but 
 - [Your Agent Needs a Thalamus](https://juanbermudez.github.io/notes/your-agent-needs-a-thalamus): Agents like dot and grok are great, but 
