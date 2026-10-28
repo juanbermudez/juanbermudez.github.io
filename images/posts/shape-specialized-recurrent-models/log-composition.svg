@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 268" width="860" height="268" font-family="system-ui, -apple-system, Segoe UI, sans-serif" role="img" aria-labelledby="t d">
+  <title id="t">What filled the durable log on October 3 (measured)</title>
+  <desc id="d">Share of 10,927 log events and 12.03 MB of payload by origin. Camera frames and their descendants: 64% of events, 73% of bytes. Screen and cursor: 21% and 19%. The user's five spoken turns: 1% and 1.1%. Remainder, derived by subtraction: 14% and 7%.</desc>
+  <rect width="860" height="268" fill="#fcfcfb"/>
+  <g font-size="13" fill="#0b0b0b">
+    <text x="250" y="32" font-weight="600">Events (n = 10,927)</text>
+    <text x="530" y="32" font-weight="600">Payload bytes (12.03 MB)</text>
+    <text x="12" y="74">Camera frames and descendants</text>
+    <text x="12" y="119">Screen and cursor</text>
+    <text x="12" y="164" font-weight="700">The user's 5 spoken turns</text>
+    <text x="12" y="209" fill="#52514e">Remainder (by subtraction)</text>
+  </g>
+  <g stroke="#e4e3df" stroke-width="1">
+    <line x1="250" y1="46" x2="250" y2="226"/>
+    <line x1="530" y1="46" x2="530" y2="226"/>
+  </g>
+  <!-- Events panel: 2.2 px per percent -->
+  <g fill="#2a78d6">
+    <rect x="250" y="58" width="141.0" height="22" rx="4"/>
+    <rect x="250" y="103" width="46.2" height="22" rx="4"/>
+    <rect x="250" y="148" width="3" height="22" rx="1.5"/>
+  </g>
+  <rect x="250" y="193" width="30.6" height="22" rx="4" fill="#b9b8b3"/>
+  <!-- Bytes panel -->
+  <g fill="#2a78d6">
+    <rect x="530" y="58" width="160.6" height="22" rx="4"/>
+    <rect x="530" y="103" width="41.1" height="22" rx="4"/>
+    <rect x="530" y="148" width="3" height="22" rx="1.5"/>
+  </g>
+  <rect x="530" y="193" width="15.9" height="22" rx="4" fill="#b9b8b3"/>
+  <g font-size="12.5" fill="#52514e">
+    <text x="397" y="74">6,999 · 64%</text>
+    <text x="302" y="119">2,292 · 21%</text>
+    <text x="259" y="164" fill="#0b0b0b" font-weight="700">112 · 1%</text>
+    <text x="286" y="209">1,524 · 14%</text>
+    <text x="697" y="74">8.78 MB · 73%</text>
+    <text x="577" y="119">2.25 MB · 19%</text>
+    <text x="539" y="164" fill="#0b0b0b" font-weight="700">0.13 MB · 1.1%</text>
+    <text x="552" y="209">0.87 MB · 7%</text>
+  </g>
+  <text x="12" y="244" font-size="11" fill="#52514e">M: REVIEW.md §2.1; totals re-checked from the October 3 runtime log on October 5 (EVIDENCE.md A6, A7).</text>
+  <text x="12" y="260" font-size="11" fill="#52514e">The remainder is arithmetic, not a measured category.</text>
+</svg>

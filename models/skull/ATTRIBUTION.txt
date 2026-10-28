@@ -1,0 +1,101 @@
+Point-cloud skull corner logo
+
+Geometry adapted from Z-Anatomy / BodyParts3D by Gauthier Kervyn and contributors.
+Z-Anatomy model distribution by Lluis Vinent Juanico:
+https://github.com/LluisV/Z-Anatomy/tree/PC-Version/Resources/Models/FBX
+Atlas and upstream credits: https://github.com/Z-Anatomy/Models-of-human-anatomy
+BodyParts3D: Kousaku Okubo; copyright The Database Center for Life Science.
+Z-Anatomy also credits Marcin Zielinski (Blender add-on) and Lluis Vinent (Unity).
+
+The skull geometry and this visual adaptation are available under CC BY-SA 4.0:
+https://creativecommons.org/licenses/by-sa/4.0/
+No endorsement by the anatomy authors is implied. No additional restrictions apply.
+
+Previous changes retained from Juan Bermudez's perception-and-attention exercise:
+22 bones and 28 teeth selected; shared rotation/translation and uniform scale;
+positions quantized to 0.001 scene units; area-weighted surface samples with seeded
+sampling; normals retained. Exact upstream hashes are in provenance.json.
+https://github.com/juanbermudez/perception-and-attention
+
+Website adaptation, October 12, 2026: original 50,533 point positions and normals
+copied unchanged; existing round-point/rim-brightening shader extracted for the
+small Home logo; source overview camera and lighting retained; transparent canvas
+replaces the opaque exercise background; CSS difference compositing adapts the
+cool-white points to the page theme; optional small pointer tilt, disabled for
+reduced motion. The original exercise is unchanged.
+
+Website refinement, October 13, 2026: display every third source surface point
+(16,845 rendered points; original geometry asset preserved), reduce point size
+and material opacity, enlarge the transparent canvas inside the same Home link,
+and compose a camera-relative front three-quarter base from the atlas anatomical
+axes, with gentle bounded idle drift and globally tracked yaw/pitch toward the
+window cursor. Distance gently reduces gaze strength to a 72% minimum; it never
+disables directional tracking at distant corners. Total orientation is clamped to keep the face visible; motion uses
+time-based damping and mouse attention recedes smoothly on departure. Theme-aware shell
+pigment replaces the previous whole-canvas light-theme darkening, preserving inner
+signal colors during hover. Loading initials are suppressed
+and the ready canvas fades in briefly. Reduced motion remains static.
+
+Renderer code adapted from Juan Bermudez's MIT-licensed exercise; its copyright
+and full permission notice are retained in RENDERER-LICENSE.txt. Three.js is MIT:
+https://github.com/mrdoob/three.js/blob/r186/LICENSE
+
+Local asset: skull-data.json. Geometry license: CC BY-SA 4.0.
+
+Internal attention-network adaptation, October 13, 2026: 31 non-detail pathways
+and 27 regional activity clusters derived from the original exercise's Attention
+view. Original route centerlines, anatomical region sampling, cyan/blue/pink/gold
+signal colors, bundle lanes, packet/trail motion and transient glow shader reused.
+Compact positions quantized to 0.001 scene units. Eight packets per edge replace
+32 at the small logo size; bundle strands reduced from 11 to 3. Icon-scale point
+sizes, energy-weighted pigment/alpha, normal compositing to avoid white saturation
+over the dense shell, and hover presence were added in both themes. Reduced motion displays a static network only while hovered. Source
+code hashes and full upstream atlas credits: attention-provenance.json. The original
+exercise files were not modified. This is a visual adaptation of that learning
+exercise; it does not establish measured physiological activity.
+
+Local derived assets: attention-data.json and attention-provenance.json.
+Atlas-derived geometry and its visual adaptation remain CC BY-SA 4.0. The adapted
+renderer remains under the original MIT notice in RENDERER-LICENSE.txt.
+
+Later October 13 size adjustment: transparent canvas enlarged to 96px desktop /
+72px mobile, with an 88px / 66px Home link. Camera field of view widened from 37
+to 41 degrees to keep the face and jaw unclipped through the bounded motion range.
+Source camera position and 24px header margins retained; no changes to the original
+geometry or exercise.
+
+Article alignment refinement, October 13, 2026: desktop Home link/canvas enlarged
+to 104px/112px; mobile remains 66px/72px. On wide article pages the fixed logo's
+optical center aligns with the title center within the balanced left gutter.
+Narrow article pages use a compact masthead, with the Home link 12px to the
+right of the fixed Back target below 912px. Geometry, camera framing, bounded
+global gaze and internal network data are unchanged.
+
+
+Cold-load and shared-anchor refinement, October 13, 2026: Home uses the same
+gutter/masthead anchor and responsive size as articles. Wide Home aligns with
+the actual first intro line; wide article alignment remains title-relative. After shader compilation
+and a hidden valid geometry frame, shell opacity is multiplied by a 240ms
+shared-curve appearance factor in the render loop. Hover networks share that
+factor. Reduced motion reveals ready geometry immediately. No initials are
+shown during loading or errors. Geometry, pigment, final opacity and bounded
+gaze/network behavior remain unchanged.
+
+Final viewport-anchor correction, October 13, 2026: the approved single-line
+article placement is shared by Home and every article before hydration. Wide
+link y63.52 and104px size are constant; horizontal position follows the shared
+viewport gutter. Compact pages retain66px links and72px canvases with fixed
+Back clearance. Title and intro measurements no longer position the logo.
+The original homepage column is preserved. Renderer geometry, final pigment/
+opacity, gaze, networks and readiness-driven fade are unchanged.
+
+
+Localized activity-halo refinement, October 13, 2026: the existing regional
+activity and traveling packet-head energy now drive two additional small point
+batches, with soft radial skirts behind the shell. Twenty-seven sampled regional
+centroids and 248 packet heads provide restrained illumination around the original
+colored cores. The atlas positions, original signal palette, core shader,
+trajectories, camera and viewport anchors are unchanged. Dark additive / lighter
+normal compositing follows the existing presence and readiness fade; reduced
+motion is static. These illustrative signals do not establish physiological
+activity. Existing geometry and renderer licenses remain unchanged.

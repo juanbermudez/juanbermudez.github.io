@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /api/dev/
+Disallow: /editor
+
+Sitemap: https://juanbermudez.github.io/sitemap.xml

@@ -1,0 +1,1 @@
+self.__SSG_MANIFEST=new Set(["\u002Fbookmarks\u002F[slug]","\u002Fnotes\u002F[slug]","\u002Fnotes\u002F[slug]\u002Fpost.md","\u002Fwriting\u002F[slug]"]);self.__SSG_MANIFEST_CB&&self.__SSG_MANIFEST_CB()

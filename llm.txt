@@ -1,0 +1,14 @@
+# Juan Bermudez
+
+> Field notes on product, AI, and humans.
+
+Experiments, learnings, field notes, and implementation writeups.
+
+## Pages
+
+- [Home](https://juanbermudez.github.io/): Introduction and reading, work, education, and bookmarks.
+- [About](https://juanbermudez.github.io/about): Background and what I am working on.
+
+## Writing
+
+- [Don't Let the Agent Grade Its Own Homework](https://juanbermudez.github.io/notes/dont-let-the-agent-grade-its-own-homework): A system that improves itself while also judging itself does not get better. It gets better at approving of itself. The version I trust starts with an independent outcome check and an information barrier.

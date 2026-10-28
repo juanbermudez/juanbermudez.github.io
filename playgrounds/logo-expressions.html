@@ -1,0 +1,1340 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Zef / Character playground</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #0a0a0a;
+        --panel: #111;
+        --line: #333;
+        --ink: #ededed;
+        --muted: #aaa;
+        --soft: 180ms;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font:
+          14px/1.5 system-ui,
+          sans-serif;
+      }
+      body.light {
+        color-scheme: light;
+        --bg: #fafafa;
+        --panel: #eee;
+        --line: #ccc;
+        --ink: #111;
+        --muted: #555;
+      }
+      button,
+      input,
+      select {
+        font: inherit;
+      }
+      button,
+      select {
+        background: var(--panel);
+        color: var(--ink);
+        border: 1px solid var(--line);
+        padding: 9px 12px;
+        cursor: pointer;
+      }
+      button:hover,
+      button[aria-pressed="true"] {
+        background: var(--ink);
+        color: var(--bg);
+      }
+      :focus-visible {
+        outline: 2px solid var(--ink);
+        outline-offset: 4px;
+      }
+      header {
+        padding: 22px 32px;
+        border-bottom: 1px solid var(--line);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+      .meta,
+      h2,
+      button,
+      select,
+      output {
+        font-family: ui-monospace, monospace;
+      }
+      .meta {
+        font-size: 11px;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      h1 {
+        font:
+          normal 30px Georgia,
+          serif;
+        margin: 6px 0;
+      }
+      h2 {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        margin: 0 0 15px;
+      }
+      p {
+        color: var(--muted);
+        margin: 6px 0 16px;
+      }
+      main {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 390px;
+        max-width: 1500px;
+        margin: auto;
+      }
+      .preview {
+        padding: 28px 32px;
+        position: sticky;
+        top: 0;
+        align-self: start;
+      }
+      .stage {
+        min-height: 420px;
+        height: 52vh;
+        display: grid;
+        place-items: center;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        position: relative;
+        overflow: hidden;
+      }
+      .stage svg {
+        width: min(72%, 430px);
+        overflow: visible;
+      }
+      .stage .meta {
+        position: absolute;
+        left: 18px;
+        bottom: 14px;
+      }
+      .presets button {
+        font-family: "Apple Color Emoji", "Segoe UI Emoji", sans-serif;
+        font-size: 27px;
+        line-height: 1;
+        min-width: 52px;
+        min-height: 52px;
+      }
+      .presets {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+        margin: 17px 0;
+      }
+      .toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+      }
+      .scale-row {
+        display: flex;
+        gap: 28px;
+        align-items: center;
+        padding: 22px 0;
+        border-bottom: 1px dashed var(--line);
+        margin-bottom: 20px;
+      }
+      .mini {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .mini svg {
+        width: var(--size);
+        height: auto;
+      }
+      .controls {
+        border-left: 1px solid var(--line);
+        padding: 28px 24px;
+      }
+      section {
+        border-bottom: 1px dashed var(--line);
+        padding-bottom: 24px;
+        margin-bottom: 24px;
+      }
+      .control {
+        display: grid;
+        grid-template-columns: 105px minmax(50px, 1fr) 46px;
+        gap: 10px;
+        align-items: center;
+        margin: 12px 0;
+      }
+      .control label {
+        font-size: 12px;
+      }
+      .control output {
+        text-align: right;
+        font-size: 11px;
+        color: var(--muted);
+      }
+      input[type="range"] {
+        width: 100%;
+        accent-color: var(--ink);
+      }
+      .bar-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px 20px;
+      }
+      .bar-grid .control {
+        grid-template-columns: 1fr 40px;
+        gap: 0;
+      }
+      .bar-grid input {
+        grid-column: 1/-1;
+        grid-row: 2;
+      }
+      .sub {
+        font:
+          11px ui-monospace,
+          monospace;
+        color: var(--muted);
+        margin-top: 18px;
+      }
+      .check {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 12px 0;
+        font-size: 12px;
+      }
+      textarea {
+        width: 100%;
+        min-height: 140px;
+        resize: vertical;
+        background: var(--bg);
+        border: 1px solid var(--line);
+        color: var(--ink);
+        padding: 12px;
+        font:
+          11px/1.5 ui-monospace,
+          monospace;
+      }
+      #status {
+        font:
+          12px ui-monospace,
+          monospace;
+        min-height: 20px;
+        margin-top: 12px;
+      }
+      details summary {
+        cursor: pointer;
+        margin-bottom: 12px;
+      }
+      .note {
+        font-size: 12px;
+      }
+      @media (max-width: 850px) {
+        main {
+          grid-template-columns: 1fr;
+        }
+        .preview {
+          position: relative;
+          padding: 20px;
+        }
+        .stage {
+          height: 330px;
+          min-height: 0;
+        }
+        .controls {
+          border-left: 0;
+          border-top: 1px solid var(--line);
+          padding: 24px 20px;
+        }
+        header {
+          padding: 18px 20px;
+        }
+        h1 {
+          font-size: 25px;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          scroll-behavior: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div>
+        <div class="meta">Zef / Motion studies / 01</div>
+        <h1>A little more character.</h1>
+      </div>
+      <button id="theme">Light canvas</button>
+    </header>
+    <main>
+      <div class="preview">
+        <div class="stage" id="stage">
+          <div class="meta">Live pose / <span id="pose-name">Rest</span></div>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="-1.09865 6.69041 82.23709 66.58793"
+            role="img"
+            aria-label="Zef character"
+          >
+            <clipPath id="clip0">
+              <path
+                class="eye-clip"
+                data-clip="0"
+                d="m10.76 33.55c-2.57-0.06-4.68 1.76-4.68 6.16 0 4.34 1.16 7.8 6.24 9.16 3.19 0.88 6.6-0.79 6.74-5.42 0.24-7.14-4.37-9.76-8.3-9.9z"
+              />
+            </clipPath>
+            <clipPath id="clip1">
+              <path
+                class="eye-clip"
+                data-clip="1"
+                d="m32.69 40.46c-2.3 0.03-4.45 1.69-4.48 6.12-0.03 4.49 1.51 7.85 6.41 9.03 3.06 0.78 6.57-0.79 6.69-5.31 0.25-7.29-4.24-9.69-8.62-9.84z"
+              />
+            </clipPath>
+            <defs>
+              <linearGradient
+                id="zef-logo-g0"
+                x1="41.1"
+                x2="50.1"
+                y1="69.01"
+                y2="69.01"
+                gradientUnits="userSpaceOnUse"
+              >
+                <stop stop-color="#fff" offset="0" />
+                <stop stop-color="#D0D0D0" offset=".5208" />
+                <stop stop-color="#fff" offset="1" />
+              </linearGradient>
+              <linearGradient
+                id="zef-logo-g1"
+                x1="5.758"
+                x2="10.12"
+                y1="57.88"
+                y2="57.88"
+                gradientUnits="userSpaceOnUse"
+              >
+                <stop stop-color="#fff" offset="0" />
+                <stop stop-color="#E6E6E6" offset="1" />
+              </linearGradient>
+              <linearGradient
+                id="zef-logo-g2"
+                x1="68.41"
+                x2="73.73"
+                y1="56.53"
+                y2="56.53"
+                gradientUnits="userSpaceOnUse"
+              >
+                <stop stop-color="#fff" offset="0" />
+                <stop stop-color="#E6E6E6" offset="1" />
+              </linearGradient>
+            </defs>
+            <path
+              d="m71.58 18.53-30.44-9.12c-4.48-1.27-8.94-0.94-12.4 0.93l-20.76 10.96c-4.74 2.53-7.12 6.16-7.12 10.82v15.13c0 3.61 1.42 6.5 3.75 7.92-0.04 0.3-0.04 0.6-0.04 1 0 2.58 3.14 4.15 5.68 4.21 0.38 3.34 3.87 5.32 6.99 5.08 1.45 1.46 3.72 2.17 5.43 1.93 1.43 1.42 3.74 2.03 5.4 1.78 1.18 1.13 2.86 1.82 4.37 1.82 2.07 0 4.46-1.92 5.65-3.1 0.64-0.64 1.38-0.85 1.81-0.53-0.24 2.55 2.19 3.96 4.9 3.96 3.39 0 7.27-2.17 7.31-5.05l14.32-7.56c0.87 0.31 1.75 0.46 2.56 0.46 2.86 0 6.05-1.82 6.05-4.13 0-0.69-0.01-1.2-0.05-1.52 2.73-1.8 4.15-4.39 4.15-7.98l0.04-17.2c0.04-5.03-2.91-8.31-7.6-9.81z"
+              fill="#000"
+            />
+            <path
+              d="m40.36 36.35-30.97-10.02c-3.73-1.2-7.37 0.91-7.37 5.96v14.88c0 4.14 1.6 7.05 5.3 8.29l1.86 0.59c1.43 0.48 2.1 1.56 2.1 3.29 0 4.1 3.55 5.29 5.96 5.03 0.18-0.02 0.38 0.05 0.49 0.17 1.32 1.45 3.42 2.03 4.91 1.8 0.19-0.03 0.4 0.03 0.52 0.16 1.22 1.32 3.26 1.81 4.94 1.59 0.19-0.03 0.39 0.03 0.52 0.15 1.05 0.99 2.52 1.62 3.82 1.62 1.73 0 3.02-1.18 3.21-2.79 0.18-1.63 1.56-2.3 2.87-1.78 1.23 0.51 2.65 1.09 3.57 1.09 2.2 0 4.02-1.91 4.02-5.76l0.05-14.98c0.03-4.8-2.29-8.17-5.8-9.29z"
+              fill="#fff"
+            />
+            <path
+              d="m71.32 19.68-30.33-9.11c-4.64-1.27-8.61-0.97-11.78 0.84l-21.12 11.05c-1.84 1.03-3.1 2.06-3.72 3.04 1.42-0.73 3.18-0.81 5.2-0.18l31.08 9.97c3.55 1.25 5.9 4.63 6.47 8.13 0.3-2.61 1.58-4.81 3.55-5.81l23.22-12.85c2.47-1.35 1.24-3.95-2.57-5.08z"
+              fill="#fff"
+            />
+            <path
+              d="m68.94 20.09-31.54-9.38c-2.19-0.56-4.24-0.37-5.94 0.57l-20.26 10.8c-1.37 0.73-1.05 2.14 0.63 2.6l30.96 9.81c2.59 0.77 5.25 0.53 7.27-0.59l19.13-10.59c1.63-0.93 1.36-2.76-0.25-3.22z"
+              fill="#000"
+            />
+            <ellipse
+              transform="rotate(-4.629 14.84 22.98)"
+              cx="14.84"
+              cy="22.98"
+              rx="2.256"
+              ry="1.233"
+              fill="#fff"
+            />
+            <ellipse
+              transform="rotate(-4.629 14.87 22.92)"
+              cx="14.87"
+              cy="22.92"
+              rx=".9245"
+              ry=".4129"
+              fill="#000"
+            />
+            <ellipse cx="25.02" cy="22.3" rx="1.353" ry=".6882" fill="#fff" />
+            <ellipse cx="29.03" cy="20.21" rx="1.33" ry=".6696" fill="#fff" />
+            <ellipse cx="32.87" cy="18.18" rx="1.307" ry=".6614" fill="#fff" />
+            <ellipse cx="36.49" cy="16.24" rx="1.257" ry=".65" fill="#fff" />
+            <ellipse cx="41.03" cy="17.64" rx="1.314" ry=".6647" fill="#fff" />
+            <ellipse cx="46.08" cy="19.13" rx="1.325" ry=".6764" fill="#fff" />
+            <ellipse cx="50.85" cy="20.52" rx="1.325" ry=".6764" fill="#fff" />
+            <ellipse cx="55.97" cy="21.95" rx="1.347" ry=".693" fill="#fff" />
+            <ellipse cx="52.03" cy="24.12" rx="1.353" ry=".6882" fill="#fff" />
+            <ellipse cx="48.12" cy="26.21" rx="1.407" ry=".6988" fill="#fff" />
+            <ellipse cx="44.31" cy="28.38" rx="1.365" ry=".7123" fill="#fff" />
+            <ellipse cx="39.32" cy="26.83" rx="1.365" ry=".7123" fill="#fff" />
+            <ellipse cx="34.49" cy="25.29" rx="1.341" ry=".6868" fill="#fff" />
+            <ellipse cx="29.63" cy="23.81" rx="1.341" ry=".6868" fill="#fff" />
+            <ellipse cx="33.6" cy="21.7" rx="1.324" ry=".6761" fill="#fff" />
+            <ellipse cx="37.35" cy="19.63" rx="1.275" ry=".6564" fill="#fff" />
+            <ellipse cx="42.16" cy="21.08" rx="1.286" ry=".6605" fill="#fff" />
+            <ellipse cx="46.96" cy="22.6" rx="1.332" ry=".674" fill="#fff" />
+            <ellipse cx="43.23" cy="24.66" rx="1.335" ry=".6844" fill="#fff" />
+            <ellipse cx="38.36" cy="23.11" rx="1.335" ry=".6844" fill="#fff" />
+            <ellipse
+              transform="rotate(-3.738 34.59 12.33)"
+              cx="34.59"
+              cy="12.33"
+              rx="2.066"
+              ry="1.14"
+              fill="#fff"
+            />
+            <ellipse
+              transform="rotate(-3.738 34.62 12.33)"
+              cx="34.62"
+              cy="12.33"
+              rx=".9158"
+              ry=".382"
+              fill="#000"
+            />
+            <ellipse
+              transform="rotate(-3.922 46.32 32.76)"
+              cx="46.32"
+              cy="32.76"
+              rx="2.373"
+              ry="1.226"
+              fill="#fff"
+            />
+            <ellipse
+              transform="rotate(-3.922 46.27 32.7)"
+              cx="46.27"
+              cy="32.7"
+              rx=".9383"
+              ry=".4245"
+              fill="#000"
+            />
+            <ellipse
+              transform="rotate(-4.461 65.88 21.57)"
+              cx="65.88"
+              cy="21.57"
+              rx="2.221"
+              ry="1.161"
+              fill="#fff"
+            />
+            <ellipse
+              transform="rotate(-4.461 65.86 21.52)"
+              cx="65.86"
+              cy="21.52"
+              rx=".8963"
+              ry=".4134"
+              fill="#000"
+            />
+            <g class="eye" data-eye="0">
+              <path
+                d="m10.76 33.55c-2.57-0.06-4.68 1.76-4.68 6.16 0 4.34 1.16 7.8 6.24 9.16 3.19 0.88 6.6-0.79 6.74-5.42 0.24-7.14-4.37-9.76-8.3-9.9z"
+                fill="#000"
+              />
+            </g>
+            <g clip-path="url(#clip0)">
+              <g class="shine" data-shine="0">
+                <ellipse
+                  cx="9.716"
+                  cy="37.73"
+                  rx="1.28"
+                  ry="2.36"
+                  transform="rotate(32 9.716 37.73)"
+                  fill="white"
+                />
+              </g>
+            </g>
+            <g class="eye" data-eye="1">
+              <path
+                d="m32.69 40.46c-2.3 0.03-4.45 1.69-4.48 6.12-0.03 4.49 1.51 7.85 6.41 9.03 3.06 0.78 6.57-0.79 6.69-5.31 0.25-7.29-4.24-9.69-8.62-9.84z"
+                fill="#000"
+              />
+            </g>
+            <g clip-path="url(#clip1)">
+              <g class="shine" data-shine="1">
+                <ellipse
+                  cx="31.91"
+                  cy="44.61"
+                  rx="1.28"
+                  ry="2.36"
+                  transform="rotate(32 31.91 44.61)"
+                  fill="white"
+                />
+              </g>
+            </g>
+            <path
+              d="m24.24 49.36-2.08-0.7c-0.93-0.29-1.84 0.18-1.87 1.48-0.01 1.01 0.63 1.89 1.48 2.17l1.97 0.71c1.01 0.35 1.87-0.39 1.87-1.58 0.01-1.05-0.54-1.8-1.37-2.08z"
+              fill="#000"
+            />
+            <path
+              d="m24.04 49.99-2.05-0.71c-0.62-0.2-1.09 0.1-1.09 0.93 0 0.73 0.41 1.28 0.99 1.48l1.93 0.67c0.68 0.23 1.14-0.12 1.14-0.92 0.01-0.71-0.33-1.26-0.92-1.45z"
+              fill="#fff"
+            />
+            <path
+              d="m23.86 50.44-1.8-0.6c-0.43-0.14-0.67 0.01-0.66 0.49 0.01 0.44 0.27 0.77 0.67 0.92l1.68 0.57c0.47 0.15 0.71 0 0.72-0.45 0.01-0.42-0.22-0.8-0.61-0.93z"
+              fill="#000"
+            />
+            <rect
+              class="bar"
+              data-bar="0"
+              x="14.28"
+              y="53.68"
+              width="2.71"
+              height="9.16"
+              rx="1.355"
+              fill="#000"
+            />
+            <rect
+              class="bar"
+              data-bar="1"
+              x="19.28"
+              y="55.23"
+              width="2.77"
+              height="9.49"
+              rx="1.385"
+              fill="#000"
+            />
+            <rect
+              class="bar"
+              data-bar="2"
+              x="24.53"
+              y="56.81"
+              width="2.83"
+              height="9.61"
+              rx="1.415"
+              fill="#000"
+            />
+            <rect
+              class="bar"
+              data-bar="3"
+              x="29.85"
+              y="58.51"
+              width="2.77"
+              height="9.59"
+              rx="1.385"
+              fill="#000"
+            />
+            <path
+              d="m5.76 56.54c-0.21 1.26 2.21 2.68 4.36 2.68l-0.07-0.85c-1.62-0.24-3.09-0.94-4.29-1.83z"
+              fill="url(#zef-logo-g1)"
+            />
+            <path
+              d="m41.1 68.13c-0.16 1.15 1.65 2.03 3.71 2.03 2.74 0 5.35-1.61 5.3-2.43-0.01-0.24-0.29-0.32-0.52-0.15-2.78 2.07-6.35 2.02-8.49 0.55z"
+              fill="url(#zef-logo-g0)"
+            />
+            <path
+              d="m73.63 55.12c-1.52 1.21-3.51 2.19-5.22 2.84 2.8 0.16 5.72-1.78 5.3-2.81l-0.08-0.03z"
+              fill="url(#zef-logo-g2)"
+            />
+            <path
+              d="m74.65 32.58c-0.4-0.61-0.87-0.35-1.06 0.58l-3.41 16.21c-0.21 0.7 0.16 0.99 0.51 0.97 0.34-0.03 0.62-0.4 0.75-1.03l3.79-16.4c0.04-0.1-0.24-0.26-0.58-0.33z"
+              fill="#fff"
+              transform="matrix(1 0 0 1 -3.9220144748687744 2.2021484375)"
+            />
+            <path
+              d="m65.02 37.44c-0.47-0.09-0.83 0.21-0.95 0.91l-3.25 16.12c-0.1 0.59 0.22 0.95 0.62 0.94 0.4-0.02 0.69-0.39 0.8-1.01l3.25-16.04c0.1-0.53-0.06-0.85-0.47-0.92z"
+              fill="#fff"
+              transform="matrix(1 0 0 1 2.2847378253936768 -2.0347375869750977)"
+            />
+            <path
+              d="m61.62 39.3c-0.44-0.07-0.76 0.24-0.87 0.86l-1.63 8.13c-0.1 0.6 0.23 0.93 0.63 0.92 0.4-0.02 0.7-0.39 0.81-0.97l1.61-7.99c0.08-0.57-0.09-0.89-0.55-0.95z"
+              fill="#fff"
+              transform="matrix(1 0 0 1 2.1180245876312256 -2.977818012237549)"
+            />
+            <path
+              d="m75.63 40.22c-0.45-0.02-0.72 0.29-0.83 0.89l-1.55 6.55c-0.12 0.59 0.12 0.92 0.5 0.92 0.39-0.01 0.68-0.38 0.81-0.97l1.61-6.5c0.11-0.57-0.08-0.87-0.54-0.89z"
+              fill="#fff"
+              transform="matrix(1 0 0 1 -3.798549175262451 2.779017686843872)"
+            />
+            <path
+              d="m54.54 45.19c-1.73 0-3.4 2.12-3.4 4.48 0 1.77 1 2.78 2.08 2.78 1.76 0 3.45-2.23 3.45-4.59 0.01-1.75-0.92-2.67-2.13-2.67z"
+              fill="#fff"
+            />
+            <path
+              d="m54.53 45.88c-1.42 0-2.76 1.74-2.76 3.71 0 1.4 0.69 2.12 1.53 2.12 1.42 0 2.74-1.79 2.74-3.82 0.03-1.35-0.63-2.01-1.51-2.01z"
+              fill="#000"
+            />
+            <path
+              d="m53.95 47.34c-0.28 0-0.41 0.19-0.41 0.57v1.84c0 0.36 0.13 0.49 0.37 0.48 0.25-0.02 0.4-0.24 0.4-0.62v-1.73c0.02-0.39-0.08-0.54-0.36-0.54z"
+              fill="#fff"
+            />
+            <path
+              d="m55.77 54.68c-0.21 0-0.43 0.06-0.64 0.17l-2.48 1.34c-0.87 0.46-1.22 1.3-1.21 2.09 0.02 1.03 0.79 1.76 1.74 1.33l2.69-1.42c0.78-0.43 1.07-1.24 1.07-2.02 0.02-0.99-0.51-1.49-1.17-1.49z"
+              fill="#fff"
+            />
+            <path
+              d="m55.64 55.35c-0.13 0-0.27 0.04-0.41 0.11l-2.37 1.29c-0.63 0.33-0.84 0.89-0.83 1.49 0.02 0.71 0.48 1.07 1.13 0.75l2.34-1.23c0.6-0.32 0.79-0.89 0.79-1.5 0.02-0.64-0.26-0.91-0.65-0.91z"
+              fill="#000"
+            />
+            <path
+              d="m55.23 56.41-2.21 1.11c-0.16 0.09-0.21 0.22-0.16 0.37 0.05 0.14 0.17 0.16 0.33 0.09l2.06-1.06c0.15-0.08 0.22-0.2 0.19-0.34 0-0.16-0.08-0.22-0.21-0.17z"
+              fill="#fff"
+            />
+          </svg>
+        </div>
+        <div class="presets" id="presets" aria-label="Expressions"></div>
+        <p id="traits" class="note" aria-live="polite"></p>
+        <div class="toolbar">
+          <button id="play" aria-pressed="false">Play expressions</button
+          ><button id="blink">Blink</button><button id="reset">Reset</button>
+        </div>
+        <div class="scale-row">
+          <div class="mini" style="--size: 32px" id="small"></div>
+          <div class="mini" style="--size: 64px" id="medium"></div>
+          <span class="meta">32 / 64 px<br />Size check</span>
+        </div>
+        <p>
+          Shape the mouth from its center. Move each bar to draw a smile, a
+          frown, or a quiet line. The black eye sockets and white highlights
+          move independently.
+        </p>
+        <div class="toolbar">
+          <button id="save">Save pose</button
+          ><select id="saved" aria-label="Saved poses">
+            <option value="">Saved poses…</option></select
+          ><button id="export">Download JSON</button>
+        </div>
+        <div id="status" role="status" aria-live="polite"></div>
+        <details>
+          <summary class="meta">Pose data / copy or import</summary>
+          <textarea
+            id="json"
+            aria-label="Pose JSON"
+            spellcheck="false"
+          ></textarea
+          ><button id="import">Apply JSON</button>
+        </details>
+      </div>
+      <aside class="controls">
+        <section>
+          <h2>01 / Mouth</h2>
+          <p class="note">
+            Rounded bars grow from their center without stretching their caps.
+            Minimum height equals each bar’s width, forming a circle. Y moves
+            each bar independently.
+          </p>
+          <div id="mouth-global"></div>
+          <button id="align">Align bar centers</button>
+          <div class="bar-grid" id="bars"></div>
+        </section>
+        <section>
+          <h2>02 / Eyes</h2>
+          <p class="note">
+            Editable lid curves, not stretched artwork. Upper and lower lids
+            shape the opening with rounded corners in the face’s isometric
+            plane. Highlights stay independently clipped inside.
+          </p>
+          <label class="check"
+            ><input id="link" type="checkbox" checked />Link eye edits</label
+          >
+          <div id="eyes"></div>
+        </section>
+        <section>
+          <h2>03 / Highlights & timing</h2>
+          <label class="check"
+            ><input id="track" type="checkbox" checked />Highlights follow
+            pointer on canvas</label
+          >
+          <div id="motion"></div>
+          <p class="note" id="motion-note">
+            Presets interpolate between poses. Manual edits are immediate.
+          </p>
+        </section>
+      </aside>
+    </main>
+    <script>
+      const $ = (s) => document.querySelector(s),
+        clone = (o) => JSON.parse(JSON.stringify(o));
+      const original = {
+        bars: [1, 1, 1, 1],
+        y: [0, 0, 0, 0],
+        eyes: [
+          { h: 1, w: 1, y: 0, r: 0 },
+          { h: 1, w: 1, y: 0, r: 0 },
+        ],
+        shine: 1,
+      };
+      const presets = {
+        Rest: clone(original),
+        Smile: {
+          ...clone(original),
+          bars: [0.18, 0.25, 0.25, 0.18],
+          y: [-1, 1, 1, -1],
+          eyes: [
+            { h: 0.72, w: 1, y: 0, r: 0 },
+            { h: 0.72, w: 1, y: 0, r: 0 },
+          ],
+        },
+        Open: {
+          ...clone(original),
+          bars: [0.65, 1.15, 1.15, 0.65],
+          y: [-1, -1, -1, -1],
+          eyes: [
+            { h: 1.12, w: 1.07, y: 0, r: 0 },
+            { h: 1.12, w: 1.07, y: 0, r: 0 },
+          ],
+          shine: 1.25,
+        },
+        Frown: {
+          ...clone(original),
+          bars: [0.15, 0.18, 0.18, 0.15],
+          y: [1, -1, -1, 1],
+        },
+        Skeptical: {
+          ...clone(original),
+          bars: [0.2, 0.25, 0.35, 0.45],
+          eyes: [
+            { h: 0.45, w: 1, y: 1, r: 0 },
+            { h: 1, w: 1, y: 0, r: 0 },
+          ],
+        },
+        Sleepy: {
+          ...clone(original),
+          bars: [0.13, 0.13, 0.13, 0.13],
+          eyes: [
+            { h: 0.12, w: 1, y: 1, r: 0 },
+            { h: 0.12, w: 1, y: 1, r: 0 },
+          ],
+          shine: 0.5,
+        },
+      };
+      function normalize(p) {
+        return {
+          ...p,
+          eyes: p.eyes.map((e) => ({
+            upper: 1.3,
+            lower: 1.3,
+            bend: 0,
+            slant: 0,
+            x: 0,
+            ...e,
+          })),
+        };
+      }
+      // Emoji traits are described in local face coordinates, before projection.
+      const eye = (changes = {}) => ({ h: 1, w: 1, y: 0, r: 0, ...changes });
+      Object.assign(presets, {
+        Wink: {
+          ...clone(original),
+          bars: [0.15, 0.15, 0.15, 0.15],
+          y: [-1, 1, 1, -1],
+          eyes: [
+            eye({ h: 0.12, w: 0.9, bend: 1.7 }),
+            eye({ h: 1.05, w: 1.05 }),
+          ],
+        },
+        Laugh: {
+          ...clone(original),
+          bars: [0.45, 1.05, 1.05, 0.45],
+          y: [-1, 0, 0, -1],
+          eyes: [
+            eye({ h: 0.12, w: 0.95, bend: -2.2 }),
+            eye({ h: 0.12, w: 0.95, bend: -2.2 }),
+          ],
+        },
+        Unamused: {
+          ...clone(original),
+          bars: [0.13, 0.13, 0.13, 0.13],
+          eyes: [eye({ h: 0.12, bend: 0 }), eye({ h: 0.12, bend: 0 })],
+        },
+        Angry: {
+          ...clone(original),
+          bars: [0.13, 0.13, 0.13, 0.13],
+          y: [1, -1, -1, 1],
+          eyes: [
+            eye({ h: 0.48, w: 0.95, upper: 0.15, slant: 0.65 }),
+            eye({ h: 0.48, w: 0.95, upper: 0.15, slant: -0.65 }),
+          ],
+        },
+        Confused: {
+          ...clone(original),
+          bars: [0.13, 0.13, 0.13, 0.13],
+          y: [-1, -0.3, 0.3, 1],
+          eyes: [
+            eye({ h: 0.65, w: 0.85, upper: 0.65 }),
+            eye({ h: 1.05, w: 1.05, y: -0.5 }),
+          ],
+        },
+        Startled: {
+          ...clone(original),
+          bars: [0.25, 0.85, 0.85, 0.25],
+          y: [-1, -1, -1, -1],
+          eyes: [eye({ h: 1.3, w: 1.2 }), eye({ h: 1.3, w: 1.2 })],
+          shine: 1.3,
+        },
+      });
+      Object.assign(original, normalize(original));
+      for (const name in presets) presets[name] = normalize(presets[name]);
+      presets.Smile.eyes.forEach((e) => {
+        e.h = 0.12;
+        e.w = 0.95;
+        e.bend = -1.8;
+      });
+      presets.Skeptical.eyes[0].upper = 0.15;
+      presets.Skeptical.eyes[0].slant = 0;
+      presets.Sleepy.eyes.forEach((e) => {
+        e.upper = 0.2;
+        e.bend = 2.1;
+      });
+      presets.Sleepy.bars = [0.13, 0.4, 0.4, 0.13];
+      const expressionTraits = {
+        Rest: "Round eyes; relaxed face.",
+        Smile: "Raised cheek arcs; mouth corners lifted.",
+        Open: "Wider eyes; tall central mouth bars suggest an open mouth.",
+        Frown: "Open eyes; mouth corners lowered.",
+        Skeptical: "One narrowed eye, one open eye; level mouth.",
+        Sleepy: "Closed lids droop at the center; small open-mouth rhythm.",
+        Wink: "One curved closed lid; one open eye; smiling mouth.",
+        Laugh: "Both eyes arch upward; a broader open smile.",
+        Unamused: "Flat closed lids; flat row of mouth dots.",
+        Angry: "Inner eye corners lower; matching frown.",
+        Confused: "Unequal eye sizes; a sloping mouth.",
+        Startled: "Largest eyes; a stronger open-mouth rhythm.",
+      };
+      let pose = clone(original),
+        duration = 320,
+        easing = "soft",
+        animation = 0,
+        playing = false,
+        playTimer,
+        blinkAnimation = 0,
+        blinkFactor = 1,
+        look = [0, 0],
+        lookAnimation = 0,
+        saved = [],
+        poseLabel = "Rest";
+      const reduced = matchMedia("(prefers-reduced-motion: reduce)");
+      if (reduced.matches) {
+        $("#track").checked = false;
+        $("#motion-note").textContent =
+          "Reduced motion: transitions are instant; playback and pointer tracking start off.";
+      }
+      const mainSvg = $("#stage svg");
+      for (const [id, _size] of [
+        ["small", 32],
+        ["medium", 64],
+      ]) {
+        const el = mainSvg.cloneNode(true);
+        el.querySelectorAll("[id]").forEach((n) => {
+          n.id += `-${id}`;
+        });
+        el.innerHTML = el.innerHTML.replace(
+          /url\(#([^)]*)\)/g,
+          (_, x) => `url(#${x}-${id})`,
+        );
+        $(`#${id}`).append(el);
+      }
+      const bounds = [...mainSvg.querySelectorAll(".bar")].map((n) => {
+          const b = n.getBBox();
+          return {
+            x: b.x + b.width / 2,
+            y: b.y + b.height / 2,
+            width: b.width,
+            height: b.height,
+          };
+        }),
+        centers = [
+          { x: 12.6, y: 41.2 },
+          { x: 34.8, y: 48.1 },
+        ];
+      function render() {
+        document.querySelectorAll("svg").forEach((svg) => {
+          svg.querySelectorAll(".bar").forEach((n, i) => {
+            const c = bounds[i];
+            // Change geometry, never scale the caps. The minimum height equals the width: a circle.
+            const height = Math.max(c.width, c.height * pose.bars[i]);
+            n.setAttribute("y", c.y + pose.y[i] - height / 2);
+            n.setAttribute("height", height);
+            n.setAttribute("rx", Math.min(c.width, height) / 2);
+          });
+          for (let i = 0; i < 2; i++) {
+            const e = pose.eyes[i],
+              c = centers[i];
+            const halfWidth = 6.5 * e.w;
+            const halfHeight = 7.5 * e.h * blinkFactor;
+            const upper = halfHeight * e.upper * 0.75;
+            const lower = halfHeight * e.lower * 0.75;
+            // Four quarter curves keep nonzero, collinear tangents at both sides.
+            // A minimum rounded end prevents pinched tips as the lids close.
+            const top = Math.max(0.65, upper),
+              bottom = Math.max(0.65, lower);
+            const rt = Math.min(halfWidth, top),
+              rb = Math.min(halfWidth, bottom);
+            const k = 0.55228475;
+            const d = `M ${-halfWidth} 0
+              C ${-halfWidth} ${-top * k} ${-halfWidth + rt * (1 - k)} ${-top} ${-halfWidth + rt} ${-top}
+              L ${halfWidth - rt} ${-top}
+              C ${halfWidth - rt * (1 - k)} ${-top} ${halfWidth} ${-top * k} ${halfWidth} 0
+              C ${halfWidth} ${bottom * k} ${halfWidth - rb * (1 - k)} ${bottom} ${halfWidth - rb} ${bottom}
+              L ${-halfWidth + rb} ${bottom}
+              C ${-halfWidth + rb * (1 - k)} ${bottom} ${-halfWidth} ${bottom * k} ${-halfWidth} 0 Z`;
+            // Face horizontal follows the existing artwork: +6.9 Y per 22.2 X.
+            // Apply expression rotation/slant in this local face plane, then project.
+            const faceSlope = 6.9 / 22.2;
+            const t = `translate(${c.x + e.x} ${c.y + e.y + e.x * faceSlope}) matrix(1 ${faceSlope} 0 1 0 0) rotate(${e.r}) skewY(${e.slant * 12})`;
+            const socket = svg.querySelector(`[data-eye="${i}"]`);
+            socket.setAttribute("transform", t);
+            const opening = socket.querySelector("path");
+            opening.setAttribute("d", d);
+            let lid = socket.querySelector(".closed-lid");
+            if (!lid) {
+              lid = document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "path",
+              );
+              lid.setAttribute("class", "closed-lid");
+              lid.setAttribute("fill", "none");
+              lid.setAttribute("stroke", "#000");
+              lid.setAttribute("stroke-width", "1.3");
+              lid.setAttribute("stroke-linecap", "round");
+              socket.append(lid);
+            }
+            const closed = Math.max(
+              0,
+              Math.min(1, (0.3 - e.h * blinkFactor) / 0.18),
+            );
+            const closedMix = closed * closed * (3 - 2 * closed);
+            lid.setAttribute(
+              "d",
+              `M ${-halfWidth + 0.65} 0 Q 0 ${2 * e.bend} ${halfWidth - 0.65} 0`,
+            );
+            lid.setAttribute("opacity", closedMix);
+            opening.setAttribute("opacity", 1 - closedMix);
+            svg
+              .querySelector(`[data-shine="${i}"]`)
+              .setAttribute("opacity", 1 - closedMix);
+            const clip = svg.querySelector(`[data-clip="${i}"]`);
+            clip.setAttribute("d", d);
+            clip.setAttribute("transform", t);
+            const x = [9.716, 31.91][i],
+              y = [37.73, 44.61][i];
+            // Use the smoothed gaze so position, roundness and tilt settle together.
+            const rightward = Math.max(0, Math.min(1, look[0] / 3));
+            const roundness = rightward * rightward * (3 - 2 * rightward);
+            const highlight = svg.querySelector(`[data-shine="${i}"] ellipse`);
+            highlight.setAttribute("rx", 1.28 + (1.82 - 1.28) * roundness);
+            highlight.setAttribute("ry", 2.36 + (1.82 - 2.36) * roundness);
+            // At full right gaze, undo the eye-plane distortion on the highlight
+            // only: equal radii should produce a circle on screen, not a sheared oval.
+            const angle = (e.r * Math.PI) / 180;
+            const skew = Math.tan((e.slant * 12 * Math.PI) / 180);
+            const a = Math.cos(angle) - Math.sin(angle) * skew;
+            const b = faceSlope * a + Math.sin(angle) + Math.cos(angle) * skew;
+            const cAxis = -Math.sin(angle);
+            const dAxis = Math.cos(angle) - faceSlope * Math.sin(angle);
+            highlight.setAttribute(
+              "transform",
+              `translate(${x} ${y}) matrix(${1 + (dAxis - 1) * roundness} ${-b * roundness} ${-cAxis * roundness} ${1 + (a - 1) * roundness} 0 0) rotate(${32 * (1 - roundness)}) translate(${-x} ${-y})`,
+            );
+            const shineScale = Math.min(pose.shine, (top + bottom) / 7);
+            const inset = 2.4 * shineScale + 0.6;
+            const shineX = Math.max(
+              -halfWidth + inset,
+              Math.min(halfWidth - inset, -2.4 + look[0]),
+            );
+            const shineY = Math.max(
+              -top + inset,
+              Math.min(bottom - inset, -0.3 * top + look[1]),
+            );
+            svg
+              .querySelector(`[data-shine="${i}"]`)
+              .setAttribute(
+                "transform",
+                `${t} translate(${shineX} ${shineY}) scale(${shineScale}) translate(${-x} ${-y})`,
+              );
+          }
+        });
+      }
+      function status(s) {
+        $("#status").textContent = s;
+      }
+      function stop() {
+        playing = false;
+        clearTimeout(playTimer);
+        $("#play").textContent = "Play expressions";
+        $("#play").setAttribute("aria-pressed", "false");
+      }
+      function mark(name) {
+        poseLabel = name;
+        $("#pose-name").textContent = name;
+        $("#traits").textContent = expressionTraits[name] || "Custom pose";
+        document.querySelectorAll("[data-preset]").forEach((b) => {
+          b.setAttribute("aria-pressed", String(b.dataset.preset === name));
+        });
+      }
+      function sync() {
+        const mean = pose.bars.reduce((a, b) => a + b, 0) / 4;
+        $("#all-height").value = mean;
+        $("#all-height").nextElementSibling.value = pose.bars.every(
+          (v) => v === pose.bars[0],
+        )
+          ? mean.toFixed(2)
+          : "mixed";
+        document.querySelectorAll("[data-key]").forEach((n) => {
+          const v = get(n.dataset.key);
+          n.value = v;
+          n.nextElementSibling.value = Number(v).toFixed(2);
+        });
+        $("#json").value = JSON.stringify(pose, null, 2);
+      }
+      function get(k) {
+        return k.split(".").reduce((o, p) => o[p], pose);
+      }
+      function set(k, v) {
+        const a = k.split(".");
+        let o = pose;
+        for (const p of a.slice(0, -1)) o = o[p];
+        o[a.at(-1)] = v;
+      }
+      function control(parent, label, key, min, max, step = 0.01) {
+        const d = document.createElement("div");
+        d.className = "control";
+        const id = `c-${key}`;
+        d.innerHTML = `<label for="${id}">${label}</label><input id="${id}" data-key="${key}" type="range" min="${min}" max="${max}" step="${step}"><output for="${id}"></output>`;
+        $(parent).append(d);
+        d.querySelector("input").oninput = (e) => {
+          stop();
+          cancelAnimationFrame(animation);
+          set(key, +e.target.value);
+          if (key.startsWith("eyes.") && $("#link").checked) {
+            const a = key.split(".");
+            set(`eyes.${1 - Number(a[1])}.${a[2]}`, +e.target.value);
+          }
+          mark("Custom");
+          render();
+          sync();
+        };
+      }
+      for (let i = 0; i < 4; i++) {
+        control("#bars", `Bar ${i + 1} height`, `bars.${i}`, 0.05, 1.4);
+        control("#bars", `Bar ${i + 1} Y`, `y.${i}`, -6, 6);
+      }
+      for (let i = 0; i < 2; i++) {
+        const label = document.createElement("div");
+        label.className = "sub";
+        label.textContent = i ? "RIGHT EYE" : "LEFT EYE";
+        $("#eyes").append(label);
+        for (const [name, key, min, max] of [
+          ["Height", "h", 0.08, 1.3],
+          ["Width", "w", 0.65, 1.25],
+          ["Y position", "y", -3, 3],
+          ["Tilt", "r", -25, 25],
+          ["X position", "x", -3, 3],
+          ["Upper lid", "upper", 0, 1.5],
+          ["Lower lid", "lower", 0, 1.5],
+          ["Lid slant", "slant", -1, 1],
+          ["Closed curve", "bend", -3, 3],
+        ])
+          control("#eyes", name, `eyes.${i}.${key}`, min, max);
+      }
+      control("#motion", "Shine size", "shine", 0.2, 1.6);
+      $("#mouth-global").innerHTML =
+        '<div class="control"><label for="all-height">All heights</label><input id="all-height" type="range" min=".05" max="1.4" step=".01" value="1"><output>1.00</output></div>';
+      $("#all-height").oninput = (e) => {
+        stop();
+        cancelAnimationFrame(animation);
+        pose.bars.fill(+e.target.value);
+        e.target.nextElementSibling.value = (+e.target.value).toFixed(2);
+        mark("Custom");
+        render();
+        sync();
+      };
+      $("#motion").insertAdjacentHTML(
+        "beforeend",
+        '<div class="control"><label for="duration">Transition</label><input id="duration" type="range" min="80" max="1000" step="10" value="320"><output>320ms</output></div><label class="check">Easing <select id="easing"><option value="soft">Soft</option><option value="linear">Linear</option><option value="spring">Small overshoot</option></select></label>',
+      );
+      $("#duration").oninput = (e) => {
+        duration = +e.target.value;
+        e.target.nextElementSibling.value = `${duration}ms`;
+      };
+      $("#easing").onchange = (e) => {
+        easing = e.target.value;
+      };
+      function blend(a, b, t) {
+        if (typeof a === "number") return a + (b - a) * t;
+        const c = Array.isArray(a) ? [] : {};
+        for (const k in a) c[k] = blend(a[k], b[k], t);
+        return c;
+      }
+      function apply(target, name) {
+        cancelAnimationFrame(animation);
+        mark(name);
+        const from = clone(pose),
+          start = performance.now();
+        function frame(now) {
+          const t = reduced.matches ? 1 : Math.min(1, (now - start) / duration);
+          let p = easing === "linear" ? t : t * t * t * (t * (t * 6 - 15) + 10);
+          if (easing === "spring") {
+            const c = 1.3;
+            p = 1 + (c + 1) * (t - 1) ** 3 + c * (t - 1) ** 2;
+          }
+          pose = blend(from, target, p);
+          render();
+          if (t < 1) animation = requestAnimationFrame(frame);
+          else {
+            pose = clone(target);
+            render();
+            sync();
+          }
+        }
+        animation = requestAnimationFrame(frame);
+      }
+      const expressionEmoji = {
+        Rest: "😐",
+        Smile: "😊",
+        Open: "😮",
+        Frown: "🙁",
+        Skeptical: "🤨",
+        Sleepy: "😴",
+        Wink: "😉",
+        Laugh: "😄",
+        Unamused: "😑",
+        Angry: "😠",
+        Confused: "😕",
+        Startled: "😳",
+      };
+      for (const name in presets) {
+        const b = document.createElement("button");
+        b.textContent = expressionEmoji[name];
+        b.title = `${name}: ${expressionTraits[name]}`;
+        b.setAttribute("aria-label", name);
+        b.dataset.preset = name;
+        b.onclick = () => {
+          stop();
+          apply(presets[name], name);
+        };
+        $("#presets").append(b);
+      }
+      $("#align").onclick = () => {
+        stop();
+        cancelAnimationFrame(animation);
+        const center = bounds.reduce((a, b) => a + b.y, 0) / 4;
+        pose.y = bounds.map((c) => center - c.y);
+        mark("Aligned");
+        render();
+        sync();
+      };
+      $("#play").onclick = () => {
+        if (playing) {
+          stop();
+          cancelAnimationFrame(animation);
+          sync();
+          return;
+        }
+        playing = true;
+        $("#play").textContent = "Pause";
+        $("#play").setAttribute("aria-pressed", "true");
+        let i = 0;
+        function next() {
+          const names = Object.keys(presets);
+          apply(presets[names[i % names.length]], names[i++ % names.length]);
+          playTimer = setTimeout(next, duration + 1100);
+        }
+        next();
+      };
+      $("#blink").onclick = () => {
+        cancelAnimationFrame(blinkAnimation);
+        if (reduced.matches) {
+          blinkFactor = 1;
+          render();
+          return;
+        }
+        const start = performance.now(),
+          from = blinkFactor;
+        const closeMs = 110,
+          holdMs = 50,
+          openMs = 200;
+        const ease = (t) => t * t * (3 - 2 * t);
+        function frame(now) {
+          const elapsed = now - start;
+          if (elapsed < closeMs) {
+            blinkFactor = from + (0.08 - from) * ease(elapsed / closeMs);
+          } else if (elapsed < closeMs + holdMs) {
+            blinkFactor = 0.08;
+          } else {
+            const progress = Math.min(1, (elapsed - closeMs - holdMs) / openMs);
+            blinkFactor = 0.08 + 0.92 * ease(progress);
+          }
+          render();
+          if (elapsed < closeMs + holdMs + openMs)
+            blinkAnimation = requestAnimationFrame(frame);
+        }
+        blinkAnimation = requestAnimationFrame(frame);
+      };
+      $("#reset").onclick = () => {
+        stop();
+        moveLook([0, 0], 360);
+        $("#all-height").value = 1;
+        $("#all-height").nextElementSibling.value = "1.00";
+        apply(original, "Rest");
+      };
+      $("#theme").onclick = () => {
+        const light = document.body.classList.toggle("light");
+        $("#theme").textContent = light ? "Dark canvas" : "Light canvas";
+      };
+      // Retarget from the currently displayed position, including mid-return.
+      function moveLook(target, milliseconds = 100) {
+        cancelAnimationFrame(lookAnimation);
+        if (reduced.matches) {
+          look = [0, 0];
+          render();
+          return;
+        }
+        const from = [...look],
+          start = performance.now();
+        function frame(now) {
+          const t = Math.min(1, (now - start) / milliseconds);
+          const progress = 1 - (1 - t) ** 3;
+          look = from.map((value, i) => value + (target[i] - value) * progress);
+          render();
+          if (t < 1) lookAnimation = requestAnimationFrame(frame);
+        }
+        lookAnimation = requestAnimationFrame(frame);
+      }
+      $("#stage").onpointermove = (e) => {
+        if (!$("#track").checked || reduced.matches) return;
+        const rect = mainSvg.getBoundingClientRect();
+        const target = [
+          ((e.clientX - rect.left - rect.width / 2) / rect.width) * 6,
+          ((e.clientY - rect.top - rect.height / 2) / rect.height) * 5,
+        ].map((v) => Math.max(-3, Math.min(3, v)));
+        moveLook(target);
+      };
+      const relaxLook = () => moveLook([0, 0], 360);
+      $("#stage").onpointerleave = relaxLook;
+      $("#track").onchange = relaxLook;
+      window.addEventListener("blur", relaxLook);
+      function valid(p) {
+        return (
+          p &&
+          Object.keys(original).every((k) => k in p) &&
+          Array.isArray(p.bars) &&
+          p.bars.length === 4 &&
+          p.bars.every((n) => Number.isFinite(n) && n >= 0.05 && n <= 1.4) &&
+          Array.isArray(p.y) &&
+          p.y.length === 4 &&
+          p.y.every((n) => Number.isFinite(n) && Math.abs(n) <= 6) &&
+          Array.isArray(p.eyes) &&
+          p.eyes.length === 2 &&
+          p.eyes.every(
+            (e) =>
+              e &&
+              [
+                ["h", 0.08, 1.3],
+                ["w", 0.65, 1.25],
+                ["y", -3, 3],
+                ["r", -25, 25],
+                ["x", -3, 3],
+                ["upper", 0, 1.5],
+                ["lower", 0, 1.5],
+                ["slant", -1, 1],
+                ["bend", -3, 3],
+              ].every(
+                ([k, a, b]) => Number.isFinite(e[k]) && e[k] >= a && e[k] <= b,
+              ),
+          ) &&
+          Number.isFinite(p.shine) &&
+          p.shine >= 0.2 &&
+          p.shine <= 1.6
+        );
+      }
+      function refreshSaved() {
+        const sel = $("#saved");
+        sel.innerHTML = '<option value="">Saved poses…</option>';
+        saved.forEach((p, i) => {
+          const o = document.createElement("option");
+          o.value = i;
+          o.textContent = p.name;
+          sel.append(o);
+        });
+      }
+      try {
+        saved = JSON.parse(
+          localStorage.getItem("zef-character-poses-v1") || "[]",
+        );
+        if (!Array.isArray(saved)) saved = [];
+        saved = saved.map((p) => ({ ...p, pose: normalize(p.pose) }));
+        saved = saved.filter(
+          (p) => p && typeof p.name === "string" && valid(p.pose),
+        );
+        refreshSaved();
+      } catch {
+        saved = [];
+      }
+      $("#save").onclick = () => {
+        stop();
+        cancelAnimationFrame(animation);
+        sync();
+        const entry = {
+          name: `Pose ${saved.length + 1} / ${poseLabel}`,
+          pose: clone(pose),
+        };
+        saved.push(entry);
+        refreshSaved();
+        $("#saved").value = saved.length - 1;
+        try {
+          localStorage.setItem("zef-character-poses-v1", JSON.stringify(saved));
+          status("Pose saved in this browser.");
+        } catch {
+          status("Saved for this session. Download JSON to keep it.");
+        }
+      };
+      $("#saved").onchange = (e) => {
+        if (e.target.value === "") return;
+        stop();
+        const p = saved[+e.target.value];
+        apply(p.pose, p.name);
+      };
+      $("#export").onclick = () => {
+        const url = URL.createObjectURL(
+          new Blob([JSON.stringify(pose, null, 2)], {
+            type: "application/json",
+          }),
+        );
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "zef-expression.json";
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        status("Pose JSON downloaded.");
+      };
+      $("#import").onclick = () => {
+        try {
+          const p = normalize(JSON.parse($("#json").value));
+          if (!valid(p)) throw Error();
+          stop();
+          apply(p, "Imported");
+          status("Pose imported.");
+        } catch {
+          status("Invalid pose. Use the shown structure and slider ranges.");
+        }
+      };
+      reduced.addEventListener("change", () => {
+        stop();
+        cancelAnimationFrame(animation);
+        cancelAnimationFrame(lookAnimation);
+        cancelAnimationFrame(blinkAnimation);
+        blinkFactor = 1;
+        look = [0, 0];
+        render();
+        sync();
+      });
+      render();
+      sync();
+      mark("Rest");
+    </script>
+  </body>
+</html>
